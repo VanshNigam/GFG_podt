@@ -53,34 +53,39 @@ class Main {
 // } Driver Code Ends
 
 
-
 class Solution {
-    public static void topoSortUtil(ArrayList<ArrayList<Integer>> adj,int crr,boolean[] vis,ArrayList<Integer> list){
-        vis[crr]=true;
-        for(int nighbor : adj.get(crr)){
-            if(!vis[nighbor]){
-                topoSortUtil(adj,nighbor,vis,list);
-            }
+    public static void topoSort(Stack<Integer>st,Map<Integer,Boolean>vis,int i,ArrayList<ArrayList<Integer>>adj){
+        vis.put(i,true);
+        
+        for(int neigh:adj.get(i)){
+            if(!vis.containsKey(neigh))
+                topoSort(st,vis,neigh,adj);
         }
-        list.add(crr);
+        st.push(i);
     }
     public static ArrayList<Integer> topoSort(int V, int[][] edges) {
-       ArrayList<ArrayList<Integer>> adj = new ArrayList<>();
-       for(int i=0 ;i<V;i++){
-           adj.add(new ArrayList<>());
-       }
-       for (int[] edge : edges) {
-            adj.get(edge[0]).add(edge[1]);
+        // code here
+        ArrayList<ArrayList<Integer>>adj=new ArrayList<>();
+        
+        for(int i=0;i<V;i++)adj.add(new ArrayList<>());
+        
+        for(int i[]:edges){
+            ArrayList<Integer>temp=adj.get(i[0]);
+            temp.add(i[1]);
         }
         
-        boolean[] vis = new boolean[V];
-        ArrayList<Integer> list = new ArrayList<>();
+        Stack<Integer>st=new Stack<>();
+        Map<Integer,Boolean>vis=new HashMap<>();
+        
         for(int i=0;i<V;i++){
-            if(!vis[i]){
-                topoSortUtil(adj,i,vis,list);
-            }
+            if(!vis.containsKey(i))
+                topoSort(st,vis,i,adj);
         }
-         Collections.reverse(list);
-         return list;
+        
+        ArrayList<Integer>ans=new ArrayList<>();
+        while(!st.isEmpty()){
+           ans.add(st.pop());
+        }
+        return ans;
     }
 }
