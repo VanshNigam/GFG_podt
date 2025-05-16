@@ -1,29 +1,26 @@
 //{ Driver Code Starts
-// Initial Template for Java
-
 import java.io.*;
-import java.lang.*;
 import java.util.*;
 
-class GFG {
+public class Main {
     public static void main(String args[]) throws IOException {
-        Scanner sc = new Scanner(System.in);
-        int t = sc.nextInt();
-        while (t-- > 0) {
-            int N = sc.nextInt();
-            int[] arr = new int[N];
-            for (int i = 0; i < N; i++) {
-                arr[i] = sc.nextInt();
-            }
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int tc = Integer.parseInt(br.readLine());
+
+        while (tc-- > 0) {
+            String str[] = br.readLine().split(" ");
+            int arr[] = new int[str.length];
+
+            for (int i = 0; i < str.length; i++) arr[i] = Integer.parseInt(str[i]);
             Solution obj = new Solution();
-            ArrayList<Integer> ans = obj.longestIncreasingSubsequence(N, arr);
+
+            ArrayList<Integer> ans = obj.getLIS(arr);
             for (int i = 0; i < ans.size(); i++) {
                 System.out.print(ans.get(i) + " ");
             }
             System.out.println();
-        
-System.out.println("~");
-}
+            System.out.println("~");
+        }
     }
 }
 // } Driver Code Ends
@@ -32,35 +29,35 @@ System.out.println("~");
 // User function Template for Java
 
 class Solution {
-    public ArrayList<Integer> longestIncreasingSubsequence(int n, int nums[]) {
-        int dp[] = new int[n];
-        Arrays.fill(dp, 1); //min LIS =1 for all
+    public ArrayList<Integer> getLIS(int arr[]) {
+        // Code here
+        int n=arr.length;
+        int dp[]=new int[n];
+        Arrays.fill(dp,1);
         
-        int preInd[] = new int[n];
-        int ans = 1;
-        int last=0;
-
-        for (int i = 1; i < n; i++) {
-            preInd[i]=i;
-            for (int prev = 0; prev < i; prev++) {
-                if (nums[prev] < nums[i] && dp[i]<dp[prev]+1) {
-                    
-                    preInd[i]=prev;
-                    dp[i] = 1 + dp[prev];
+        int prevInd[]=new int[n];
+        
+        int maxI=0;
+        int max=0;
+        for(int i=0;i<n;i++){
+            prevInd[i]=i;
+            for(int j=0;j<i;j++){
+                if(arr[j]<arr[i] && dp[j]+1>dp[i]){
+                    dp[i]=dp[j]+1;
+                    if(dp[i]>max){
+                        max=dp[i];
+                        maxI=i;
+                    }
+                    prevInd[i]=j;
                 }
             }
-            if(ans<dp[i]){
-                ans=dp[i];
-                last=i;
-            }
         }
-        ArrayList<Integer>a=new ArrayList<>();
-        while(last!=preInd[last]){
-            a.add(0, nums[last]);
-            last=preInd[last];
+        ArrayList<Integer>ans=new ArrayList<>();
+        while(maxI !=prevInd[maxI]){
+            ans.add(0,arr[maxI]);
+            maxI=prevInd[maxI];
         }
-        a.add(0, nums[last]);
-
-        return a;
+        ans.add(0,arr[maxI]);
+        return ans;
     }
 }
