@@ -1,52 +1,20 @@
-//{ Driver Code Starts
-// Initial Template for Java
-
-import java.io.*;
-import java.util.*;
-
-class GfG {
-    public static void main(String args[]) {
-        Scanner sc = new Scanner(System.in);
-        int t = sc.nextInt();
-        while (t-- > 0) {
-            String s = sc.next();
-            int k = sc.nextInt();
-            Solution obj = new Solution();
-            System.out.println(obj.longestkSubstr(s, k));
-        
-System.out.println("~");
-}
-    }
-}
-// } Driver Code Ends
-
-
-// User function Template for Java
-
 class Solution {
-    public int longestkSubstr(String s, int k) {
+    public int longestKSubstr(String s, int k) {
         // code here
-        int l=0;
-        int r=0;
-        
-        int n=s.length(),max=0;
         Map<Character,Integer>mp=new HashMap<>();
         
-        while(l<n && r<n){
-            char ch=s.charAt(l);
-            
-            mp.put(ch,mp.getOrDefault(ch,0)+1);
-            if(mp.size()>k){
-                int x=mp.get(s.charAt(r));
-                if(x>1)mp.put(s.charAt(r),mp.getOrDefault(s.charAt(r),0)-1);
-                else mp.remove(s.charAt(r));
-                r++;
+        int x=0 ,ans=-1;
+
+        for(int y=0;y<s.length();y++){
+            mp.put(s.charAt(y),mp.getOrDefault(s.charAt(y),0)+1);
+            while(mp.size()>k){
+                char r=s.charAt(x);
+                if(mp.get(r)>1)mp.put(r,mp.get(r)-1);
+                else mp.remove(r);
+                x++;
             }
-            else if(mp.size()==k){
-                max=Math.max(l-r+1,max);
-            }
-            l++;
+            if(mp.size()==k)ans=Math.max(ans,y-x+1);
         }
-        return max==0?-1:max;
+        return ans;
     }
 }
