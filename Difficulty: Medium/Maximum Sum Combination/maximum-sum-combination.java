@@ -1,64 +1,47 @@
-//{ Driver Code Starts
-// Initial Template for Java
-
 import java.util.*;
-import java.lang.*;
-import java.math.*;
-import java.io.*;
-
-class GFG {
-    public static void main(String[] args) throws IOException {
-        Scanner sc = new Scanner(System.in);
-        int T = sc.nextInt();
-        while (T-- > 0) {
-            int n = sc.nextInt();
-            int k = sc.nextInt();
-            int a[] = new int[n];
-            for (int i = 0; i < n; i++) {
-                a[i] = sc.nextInt();
-            }
-            int b[] = new int[n];
-            for (int i = 0; i < n; i++) {
-                b[i] = sc.nextInt();
-            }
-
-            Solution obj = new Solution();
-            List<Integer> ans = obj.maxCombinations(n, k, a, b);
-            for (int e : ans) System.out.print(e + " ");
-            System.out.println();
-        
-System.out.println("~");
-}
-    }
-}
-
-// } Driver Code Ends
-
 
 class Solution {
-    static List<Integer> maxCombinations(int N, int k, int A[], int B[]) {
-        Arrays.sort(A);
-        Arrays.sort(B);
-
-        PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> Integer.compare(b[0], a[0]));
-
-        for (int i = N - 1; i >= 0; i--) {
-            pq.offer(new int[]{A[N - 1] + B[i], N - 1, i});
-        }
-
-        List<Integer> ans = new ArrayList<>();
+    public ArrayList<Integer> topKSumPairs(int[] a, int[] b, int k) {
+        Arrays.sort(a);
+        Arrays.sort(b);
+        int n = a.length;
         
-        while (k > 0) {
-            int[] curr = pq.poll();
-            ans.add(curr[0]);
-
-            if (curr[1] > 0) {
-                pq.offer(new int[]{A[curr[1] - 1] + B[curr[2]], curr[1] - 1, curr[2]});
+        PriorityQueue<Pair> maxHeap = new PriorityQueue<>((p1, p2) -> p2.sum - p1.sum);
+        Set<String> visited = new HashSet<>();
+        ArrayList<Integer> result = new ArrayList<>();
+        
+        // Start with the largest possible pair (last elements since array is sorted)
+        int i = n - 1, j = n - 1;
+        maxHeap.add(new Pair(i, j, a[i] + b[j]));
+        visited.add(i + "," + j);
+        
+        while (k-- > 0 && !maxHeap.isEmpty()) {
+            Pair current = maxHeap.poll();
+            result.add(current.sum);
+            i = current.i;
+            j = current.j;
+            
+            if (i - 1 >= 0 && !visited.contains((i - 1) + "," + j)) {
+                maxHeap.add(new Pair(i - 1, j, a[i - 1] + b[j]));
+                visited.add((i - 1) + "," + j);
             }
-            k--;
+            
+            if (j - 1 >= 0 && !visited.contains(i + "," + (j - 1))) {
+                maxHeap.add(new Pair(i, j - 1, a[i] + b[j - 1]));
+                visited.add(i + "," + (j - 1));
+            }
         }
         
-        return ans;
+        return result;
+    }
+
+    static class Pair {
+        int i, j, sum;
+        Pair(int i, int j, int sum) {
+            this.i = i;
+            this.j = j;
+            this.sum = sum;
+        }
     }
 }
 
