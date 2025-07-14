@@ -1,41 +1,32 @@
 class Solution {
-    
-    private Set<String> power5Set = new HashSet<>();
-    private int[] memo;
-
-    public int cuts(String s) {
-        for (long i = 1; i <= (1 << 30); i *= 5) {
-            power5Set.add(Long.toBinaryString(i));
-        }
-
-        memo = new int[s.length()];
-        Arrays.fill(memo, -2); 
-
-        int result = dfs(s, 0);
-        return result == Integer.MAX_VALUE ? -1 : result;
-    }
-
-    private int dfs(String s, int index) {
-        if (index == s.length()) return 0;
-        if (memo[index] != -2) return memo[index];
-
-        int minCuts = Integer.MAX_VALUE;
-
-        for (int i = index + 1; i <= s.length(); i++) {
-            String sub = s.substring(index, i);
-            if (isValidPowerOf5(sub)) {
-                int res = dfs(s, i);
-                if (res != Integer.MAX_VALUE) {
-                    minCuts = Math.min(minCuts, 1 + res);
-                }
+    public int help(int i,String s,HashSet<Integer>st,int dp[]){
+        if(i>=s.length())return 0;
+        if(dp[i]!=-1)return dp[i];
+        
+        int ans=s.length()+1;
+        int num=0;
+        
+        for(int j=i;j<s.length();j++){
+            num=num*2+s.charAt(j)-'0';
+            
+            if(s.charAt(i)!='0' && st.contains(num)){
+                ans=Math.min(ans,1+help(j+1,s,st,dp));
             }
         }
-
-        memo[index] = minCuts;
-        return minCuts;
+        return dp[i]=ans;
     }
-
-    private boolean isValidPowerOf5(String s) {
-        return s.charAt(0) != '0' && power5Set.contains(s);
+    public int cuts(String s) {
+        // code here
+        if(s.charAt(0)=='0')return -1;
+        
+        HashSet<Integer>st=new HashSet<>();
+        for(int i=1;i<1000000000;i*=5){
+            st.add(i);
+        }
+        int dp[]=new int[s.length()];
+        Arrays.fill(dp,-1);
+        
+        int ans=help(0,s,st,dp);
+        return ans>s.length()?-1:ans;
     }
 }
